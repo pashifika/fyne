@@ -25,9 +25,11 @@ type SelectEx struct {
 
 	focused bool
 	hovered bool
-	popUp   *PopUpMenu
+	popUp   *PopUpMenuEx
 	tapAnim *fyne.Animation
 	binder  binding.String
+
+	searchBoxHeight float32
 }
 
 type SelectOption interface {
@@ -53,7 +55,8 @@ var _ fyne.Focusable = (*SelectEx)(nil)
 var _ fyne.Disableable = (*SelectEx)(nil)
 
 // NewSelectEx creates a new select widget with the set list of options and changes handler
-func NewSelectEx(options []SelectOption, placeHolder string, binder binding.String, changed func(opt SelectOption)) *SelectEx {
+func NewSelectEx(options []SelectOption, placeHolder string, binder binding.String,
+	searchBoxHeight float32, changed func(opt SelectOption)) *SelectEx {
 	if placeHolder == "" {
 		placeHolder = defaultPlaceHolder
 	}
@@ -62,6 +65,8 @@ func NewSelectEx(options []SelectOption, placeHolder string, binder binding.Stri
 		Options:     options,
 		PlaceHolder: placeHolder,
 		binder:      binder,
+
+		searchBoxHeight: searchBoxHeight,
 	}
 	s.ExtendBaseWidget(s)
 	return s
@@ -278,7 +283,7 @@ func (s *SelectEx) showPopUp() {
 	}
 
 	c := fyne.CurrentApp().Driver().CanvasForObject(s.super())
-	s.popUp = NewPopUpMenu(fyne.NewMenu("", items...), c)
+	s.popUp = NewPopUpMenuEx(fyne.NewMenu("", items...), c, s.searchBoxHeight)
 	s.popUp.alignment = s.Alignment
 	s.popUp.ShowAtPosition(s.popUpPos())
 	s.popUp.Resize(fyne.NewSize(s.Size().Width, s.popUp.MinSize().Height))
