@@ -85,7 +85,14 @@ func (p *PopUpMenuEx) Move(pos fyne.Position) {
 	if p.search != nil {
 		y = y + p.search.height + 2*theme.Padding()
 	}
-	p.BaseWidget.Move(fyne.NewPos(pos.X, y))
+	x := pos.X
+	if x+p.BaseWidget.size.Width > p.canvas.Content().Size().Width {
+		x = p.canvas.Content().Size().Width - p.BaseWidget.size.Width
+		if x < 0 {
+			x = 0
+		}
+	}
+	p.BaseWidget.Move(fyne.NewPos(x, y))
 }
 
 // Resize changes the size of the pop-up menu.
